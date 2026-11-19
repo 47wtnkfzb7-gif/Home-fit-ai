@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "HOMEFIT AI",
+    "slug": "homefit-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "homefitai",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "ai.homefit.app",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "HOMEFIT AI utilise la caméra pour filmer tes exercices lors de l'analyse technique, scanner un code-barres ou un QR code. Aucune vidéo n'est conservée après l'analyse.",
+        "NSPhotoLibraryAddUsageDescription": "HOMEFIT AI peut enregistrer tes photos de repas uniquement si tu le demandes.",
+        "NSPhotoLibraryUsageDescription": "HOMEFIT AI accède à ta galerie uniquement lorsque tu choisis d'analyser une vidéo d'exercice que tu as déjà filmée ou importer un produit."
+      }
+    },
+    "android": {
+      "package": "ai.homefit.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#FF6A00",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "server",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FF6A00",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
