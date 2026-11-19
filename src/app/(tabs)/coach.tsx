@@ -1,6 +1,14 @@
-import { Card, EmptyState, Screen, ScreenHeader, SectionHeader } from '@/components/ui';
+// Coach IA — analyse vidéo réelle + assistant conversationnel + conseils.
+
+import { router } from 'expo-router';
+
+import { Card, PrimaryButton, Screen, ScreenHeader, SectionHeader } from '@/components/ui';
+import { isPoseProviderAvailable } from '@/features/pose/provider';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function CoachScreen() {
+  const poseReady = isPoseProviderAvailable();
+
   return (
     <Screen>
       <ScreenHeader
@@ -9,25 +17,31 @@ export default function CoachScreen() {
       />
 
       <SectionHeader title="Analyse vidéo" />
-      <EmptyState
-        icon="videocam"
-        title="Analyse technique de tes mouvements"
-        message="Filme un exercice et obtiens une analyse réelle de ta technique : alignement, amplitude, stabilité et contrôle. Les vidéos ne sont jamais conservées."
-        phase="Prochainement"
+      <PrimaryButton label="Analyser un exercice" icon="videocam" onPress={() => router.push('/analyse-video')} />
+      <Card
+        icon={poseReady ? 'checkmark-circle' : 'construct'}
+        iconColorName={poseReady ? 'success' : 'primary'}
+        title={poseReady ? 'Détection de pose active' : 'Détection de pose : build natif requis'}
+        subtitle={
+          poseReady
+            ? 'Le moteur géométrique évalue uniquement des critères réellement observables.'
+            : "Le moteur géométrique (critères, notes /20 et /100, confiance) est prêt et testé. L'estimation des articulations exige un build iOS natif (ML Kit / MediaPipe). Aucune analyse n'est jamais simulée."
+        }
       />
 
       <SectionHeader title="Discussion" />
       <Card
-        icon="chatbubble-ellipses"
+        icon="chatbubbles"
         title="Discute avec ton coach"
-        subtitle="« Propose-moi une séance de 30 minutes sans matériel. », « Comment améliorer mes pompes ? »… L'assistant conversationnel s'appuiera sur ton profil et ton historique."
+        subtitle="« Propose-moi une séance de 30 minutes sans matériel. », « Comment améliorer mes pompes ? », « Analyse ma progression »… Réponses construites sur ton profil et tes statistiques réelles."
+        onPress={() => router.push('/coach-chat')}
       />
 
       <SectionHeader title="Conseils techniques" />
       <Card
         icon="body"
         title="La technique avant la charge"
-        subtitle="Maîtrise chaque mouvement à vide (ou charge légère) avant d'augmenter la difficulté. Une bonne exécution vaut mieux qu'une charge lourde mal placée."
+        subtitle="Maîtrise chaque mouvement à vide (ou charge légère) avant d'augmenter la difficulté."
       />
       <Card
         icon="flame"
@@ -37,13 +51,13 @@ export default function CoachScreen() {
       <Card
         icon="bed"
         title="La récupération fait progresser"
-        subtitle="Respecte au moins un jour de repos entre deux séances intenses sur les mêmes groupes musculaires. Le sommeil et l'hydratation sont tes meilleurs alliés."
+        subtitle="Respecte au moins un jour de repos entre deux séances intenses sur les mêmes groupes musculaires."
       />
       <Card
         icon="medkit"
         iconColorName="success"
         title="Douleur = stop"
-        subtitle="Une douleur vive ou qui persiste après l'effort n'est jamais normale : arrête l'exercice et demande un avis médical. HOMEFIT AI ne remplace ni un médecin, ni un coach humain."
+        subtitle="Une douleur vive n'est jamais normale : arrête l'exercice et demande un avis médical. HOMEFIT AI ne remplace ni un médecin, ni un coach humain."
       />
     </Screen>
   );

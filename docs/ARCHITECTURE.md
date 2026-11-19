@@ -59,7 +59,7 @@ Root `Stack` → groupe `(tabs)` avec 6 onglets natifs iOS :
 `Accueil`, `Entraînements`, `Coach IA`, `Nutrition`, `Progression`, `Profil`,
 plus un écran `confidentialite` (texte complet de politique de confidentialité).
 
-## 5. Générateur de séances (Phase 3 — plan)
+## 5. Générateur de séances (implémenté — `src/features/engine/engine.ts`, bibliothèque `src/features/library/exercises.ts` : 105 exercices vérifiés)
 
 ### Bibliothèque d'exercices (SQLite, ≥ 100)
 
@@ -82,7 +82,7 @@ séries/reps/repos calculés (double progression), anti-répétitivité via scor
 récence, **remplacement automatique si matériel manquant**, plafonds de sécurité
 selon l'âge et le niveau, exclusions des exercices à éviter.
 
-## 6. Coach IA vidéo (Phase 5 — plan)
+## 6. Coach IA vidéo (implémenté —`src/features/pose/`)
 
 ```
 Caméra/galerie → PoseLandmarker (33 landmarks × N frames)
@@ -102,7 +102,7 @@ Caméra/galerie → PoseLandmarker (33 landmarks × N frames)
   évalués** uniquement (méthode transparente affichée).
 - Vidéos supprimées immédiatement après calcul ; consentement explicite.
 
-## 7. Nutrition (Phase 6 — plan)
+## 7. Nutrition (implémentée — `src/features/nutrition/foods.ts`, écrans scanner-repas / scanner-produits / journal)
 
 - **Scanner repas** : la reconnaissance fiable d'une photo exige un modèle
   multimodal. Au lancement : capture + **saisie guidée** (bibliothèque d'aliments
@@ -113,7 +113,7 @@ Caméra/galerie → PoseLandmarker (33 landmarks × N frames)
 - **Journal** : 4 repas + résumé protéines estimées, fourchettes indicatives,
   pas de quota imposé, pas d'objectif calorique, pas de compléments poussés.
 
-## 8. Gamification (Phase 4 — plan)
+## 8. Gamification (implémentée — `src/features/gamification/xp.ts`, écran avatar avec déblocages réels par XP)
 
 - `xp_events` ; progression positive uniquement, **aucune régression crapulative** lors des pauses.
 - Avatar vectoriel 5 slots (coiffure, tenue, couleurs, accessoires, apparence) avec débloquages cosmétiques.
@@ -134,3 +134,13 @@ Caméra/galerie → PoseLandmarker (33 landmarks × N frames)
 - Analyse de repas par IA visuelle : bloquée tant qu'aucun service non simulé n'est disponible ; l'app l'indique clairement et propose la saisie manuelle.
 - Pose estimation : abstraction `PoseAnalyzer` pour choisir entre ML Kit Pose (rapide à intégrer) et MediaPipe Pose Landmarker (plus complet).
 - i18n EN : couche prévue, implémentée à la Phase 2 avec le questionnaire.
+
+
+## 11. État final de l'implémentation
+
+- **Phases 1 à 8 complètes**, chaque bouton branché sur une fonction réelle (SQLite, moteur, Open Food Facts, caméra).
+- **Tests** : `__tests__/` — 28 tests unitaires (moteur, pose/analyzers, bibliothèque, nutrition, XP) ; `npm test`.
+- **Analyse vidéo** : pipeline complet (consentement → capture/import → extraction de frames → `PoseProvider` → `analyzeExercise` → persistance `video_analyses` → suppression vidéo/frames). Le fournisseur de pose natif (ML Kit / MediaPipe) exige un development build iOS ; tant qu'il n'est pas lié, l'app affiche un état indisponible explicite — jamais d'analyse simulée. Brancher un fournisseur réel ne demande que d'implémenter `PoseProvider` (`src/features/pose/provider.ts`).
+- **Reconnaissance d'aliments** : aucun modèle embarqué dans ce build ; le scanner de repas est un guide honnête (photo = aide-mémoire, sélection + quantités + correction manuelle). Un futur modèle on-device (ou un backend sécurisé, sans clé dans le client) peut être branché sans changer l'UI.
+- **App Store** : `eas.json` prêt (development/preview/production), permissions iOS expliquées en français dans `app.json`, politique de confidentialité in-app (`/confidentialite`), langue initiale FR avec libellés centralisés prêts pour la traduction EN.
+- **Reste humain** : compte Apple Developer, build/submit EAS depuis un Mac, captures d'écran App Store, révision Apple.
