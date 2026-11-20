@@ -1,53 +1,63 @@
-import { Card, EmptyState, Screen, ScreenHeader, SectionHeader } from '@/components/ui';
+// Entraînements — générateur, bibliothèque, historique, favoris : tout réel.
 
-export default function WorkoutsScreen() {
+import { router } from 'expo-router';
+import { StyleSheet, Text } from 'react-native';
+
+import { Card, PrimaryButton, Screen, ScreenHeader, SectionHeader } from '@/components/ui';
+import { EXERCISES } from '@/features/library/exercises';
+import { FORMAT_LABELS, type WorkoutFormat } from '@/features/engine/engine';
+import { useTheme } from '@/hooks/use-theme';
+import { useProfile } from '@/features/profile/profile-context';
+import { listWorkouts } from '@/services/workouts';
+
+export default function EntrainementsScreen() {
+  const theme = useTheme();
+  const { profile } = useProfile();
+  const workouts = listWorkouts();
+
   return (
     <Screen>
       <ScreenHeader
         title="Entraînements"
-        subtitle="Des séances construites pour toi : niveau, matériel, temps disponible et récupération."
+        subtitle="Séances générées par un vrai moteur : ton matériel, ton niveau, ton historique."
       />
 
-      <SectionHeader title="Programmes" />
-      <EmptyState
-        icon="calendar"
-        title="Tes programmes hebdomadaires"
-        message="Un planning adapté à ta fréquence choisie s'affichera ici dès que ton profil sera configuré."
-        phase="Prochainement"
-      />
+      <PrimaryButton label="Générer une séance" icon="sparkles" onPress={() => router.push('/generer')} />
 
-      <SectionHeader title="Générateur de séances" />
+      <SectionHeader title="Formats disponibles" />
+      <Text style={[styles.formats, { color: theme.textSecondary }]}>
+        {(Object.keys(FORMAT_LABELS) as WorkoutFormat[]).map((f) => FORMAT_LABELS[f]).join(' · ')}
+      </Text>
+
+      <SectionHeader title="Bibliothèque et suivi" />
       <Card
-        icon="sparkles"
-        title="Générateur intelligent"
-        subtitle="Choisis un format (classique, circuit, full body, court…) et le moteur compose ta séance : échauffement, exercices principaux, complémentaires, retour au calme."
+        icon="albums"
+        title={`Bibliothèque d'exercices (${EXERCISES.length})`}
+        subtitle="Consignes techniques, erreurs fréquentes, variantes plus faciles / plus difficiles, favoris, partage QR."
+        onPress={() => router.push('/exercices')}
       />
-
-      <SectionHeader title="Bibliothèque d'exercices" />
       <Card
-        icon="library"
-        title="Plus de 100 exercices guidés"
-        subtitle="Chaque fiche contiendra les muscles sollicités, le matériel nécessaire, les consignes techniques, les erreurs fréquentes et des variantes plus faciles ou plus difficiles."
-      />
-
-      <SectionHeader title="Historique" />
-      <EmptyState
         icon="time"
-        title="Aucune séance enregistrée"
-        message="Ton historique apparaîtra ici dès que tu termineras ta première séance."
+        title="Historique des séances"
+        subtitle={workouts.length ? `${workouts.length} séance(s) réellement enregistrée(s).` : 'Aucune séance terminée pour le moment.'}
+        onPress={() => router.push('/historique')}
       />
 
+      <SectionHeader title="Programme de la semaine" />
       <Card
-        icon="medkit"
-        iconColorName="success"
-        title="Sécurité avant tout"
-        subtitle="HOMEFIT AI n'impose jamais de programme extrême. En cas de douleur pendant un exercice, arrête-toi immédiatement et demande un avis médical adapté.">
-        <Card
-          icon="arrow-forward"
-          title="Rappels de sécurité"
-          subtitle="Échauffe-toi toujours. Progresse par petites étapes. Le repos fait partie de l'entraînement."
-        />
-      </Card>
+        icon="calendar"
+        title={profile ? `${profile.sessionsPerWeek ?? 3} séances · ${profile.sessionMinutes ?? 30} min` : 'Profil incomplet'}
+        subtitle={
+          profile
+            ? `Objectifs : ${profile.goals.length} · Groupes favoris : ${profile.muscleGroups.length}. Le générateur respecte ta récupération et évite les répétitions.`
+            : 'Termine le questionnaire pour des programmes hebdomadaires personnalisés.'
+        }
+        onPress={() => router.push('/generer')}
+      />
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  formats: { fontSize: 12, lineHeight: 18, marginTop: -8 },
+});

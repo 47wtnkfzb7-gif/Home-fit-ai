@@ -10,26 +10,44 @@ React Native + Expo + TypeScript, orientée local-first.
 | Phase | Contenu | État |
 |---|---|---|
 | 1 | Identité visuelle, design system, navigation 6 onglets | ✅ |
-| 2 | Questionnaire initial + profil persistant (SQLite) | ⏭️ suivante |
-| 3 | Bibliothèque 100+ exercices + générateur de séances | 📋 planifié |
-| 4 | Statistiques, calendrier, avatar, XP/badges | 📋 planifié |
-| 5 | Coach IA vidéo (pose estimation réelle) | 📋 planifié |
-| 6 | Nutrition (scanner repas, Open Food Facts, journal) | 📋 planifié |
-| 7 | Scanner QR + QR internes | 📋 planifié |
-| 8 | Coach conversationnel | 📋 planifié |
-| 9 | Tests, performances, sécurité | 📋 planifié |
-| 10 | Préparation App Store (EAS build, métadonnées) | 📋 planifié |
+| 2 | Questionnaire initial (10 questions) + profil persistant (SQLite) | ✅ |
+| 3 | Bibliothèque 105 exercices + générateur de séances (8 formats) | ✅ |
+| 4 | Statistiques, calendrier, avatar, XP/niveaux/badges | ✅ |
+| 5 | Coach IA vidéo : pipeline réel caméra→frames→pose→notes /20 et /100 | ✅ (pose native requise — voir limitation honnête) |
+| 6 | Nutrition : scanner repas, Open Food Facts, journal 4 repas | ✅ |
+| 7 | Scanner QR + QR internes `homefitai://` | ✅ |
+| 8 | Coach conversationnel (regex FR sur données réelles) | ✅ |
+| 9 | Tests unitaires (jest, 28 tests), tsc et lint à 0 erreur | ✅ |
+| 10 | Préparation App Store (eas.json, métadonnées, permissions FR) | ✅ (build final sur Mac + compte Apple requis) |
 
 L'architecture cible complète est décrite dans [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-## Démarrer
+## Installer la version web (gratuit, aucun build natif)
+
+L'application web est déployée sur **GitHub Pages** via le workflow
+`.github/workflows/deploy-web.yml` (déclenché sur `main`). Les données restent
+dans le navigateur (localStorage), 100 % local-first.
+
+Une fois le déploiement actif (`Settings → Pages → Source: Deploy from a branch
+→ gh-pages`), la page s'ouvre sur : `https://<compte>.github.io/Home-fit-ai/`.
+
+Pour l'installer comme une application :
+- **iPhone (Safari)** : Ouvrir la page → bouton Partager → « Sur l'écran d'accueil ».
+- **Android (Chrome)** : menu ⋮ → « Ajouter à l'écran d'accueil / Installer l'application ».
+
+Sur le web, les fonctions nécessitant les capteurs natifs (analyse vidéo pose,
+scan caméra QR / codes-barres, notifications locales) affichent un état
+explicitement indisponible — jamais simulé. Tout le reste (quiz, générateur,
+bibliothèque, séances, journal, coach, stats, XP, sauvegarde) fonctionne.
+
+## Démarrer en développement
 
 ```bash
 npm install
 npx expo start --ios
 ```
 
-TypeScript : `npx tsc --noEmit` — Lint : `npx expo lint`.
+TypeScript : `npx tsc --noEmit` — Lint : `npx expo lint` — Tests : `npm test`.
 
 ## Principes produit
 

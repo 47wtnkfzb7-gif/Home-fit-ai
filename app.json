@@ -27,7 +27,7 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "output": "server",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -39,11 +39,17 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 120
         }
-      ]
+      ],
+      "expo-sqlite",
+      "expo-sharing",
+      "expo-camera",
+      "expo-image-picker",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": true,
+      "baseUrl": "/Home-fit-ai"
     }
   }
 }
