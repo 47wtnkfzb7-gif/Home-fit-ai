@@ -171,6 +171,15 @@ export const QUESTIONS: Question[] = [
 ];
 
 // Cast typé des réponses vers le modèle de profil.
+function coerceNumber(answer: unknown): number | null {
+  if (typeof answer === 'number') return Number.isFinite(answer) ? answer : null;
+  if (typeof answer === 'string' && answer.trim() !== '') {
+    const parsed = Number(answer.replace(',', '.'));
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
 export function applyAnswer(profile: UserProfile, question: Question, answer: unknown): UserProfile {
   const next = { ...profile };
   switch (question.id) {
@@ -190,10 +199,10 @@ export function applyAnswer(profile: UserProfile, question: Question, answer: un
       next.equipment = answer as Equipment[];
       break;
     case 'sessionsPerWeek':
-      next.sessionsPerWeek = typeof answer === 'number' ? answer : null;
+      next.sessionsPerWeek = coerceNumber(answer);
       break;
     case 'sessionMinutes':
-      next.sessionMinutes = typeof answer === 'number' ? answer : null;
+      next.sessionMinutes = coerceNumber(answer);
       break;
     case 'muscleGroups':
       next.muscleGroups = answer as MuscleGroup[];
