@@ -1,0 +1,17 @@
+{
+  "name": "HOMEFIT AI",
+  "short_name": "HOMEFIT",
+  "description": "Ton corps, ton rythme, ton évolution.",
+  "lang": "fr",
+  "start_url": "/Home-fit-ai/",
+  "scope": "/Home-fit-ai/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101114",
+  "theme_color": "#FF6A00",
+  "icons": [
+    { "src": "/Home-fit-ai/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/Home-fit-ai/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/Home-fit-ai/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

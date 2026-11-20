@@ -1,12 +1,11 @@
 // Rappels d'entraînement — 100 % facultatifs, programmés localement
 // (expo-notifications, aucune donnée sortante). Désactivables à tout moment.
 
-import * as Notifications from 'expo-notifications';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
-import { Card, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
+import { Card, EmptyState, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
 import { getJson, setJson, removeKey } from '@/services/db';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -17,19 +16,26 @@ interface ReminderSettings {
   minute: number;
 }
 
+async function notifs(): Promise<typeof import('expo-notifications')> {
+  return import('expo-notifications');
+}
+
 const DEFAULTS: ReminderSettings = { enabled: false, weekdays: [1, 3, 5], hour: 18, minute: 30 };
 const DAY_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
-export default function RappelsScreen() {
+function RappelsNative() {
   const theme = useTheme();
   const [settings, setSettings] = useState<ReminderSettings>(() => getJson<ReminderSettings>('reminders') ?? DEFAULTS);
   const [permission, setPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    void Notifications.getPermissionsAsync().then((r) => setPermission(r.granted));
+    void notifs()
+      .then((n) => n.getPermissionsAsync())
+      .then((r) => setPermission(r.granted));
   }, []);
 
   async function persist(next: ReminderSettings) {
+    const Notifications = await notifs();
     setSettings(next);
     setJson('reminders', next);
     await Notifications.cancelAllScheduledNotificationsAsync();
@@ -146,3 +152,22 @@ const styles = StyleSheet.create({
   stepperRow: { flexDirection: 'row' as const, alignItems: 'center', gap: 20 },
   stepBtn: { padding: 8, borderRadius: 12 },
 });
+
+function WebUnavailable() {
+  return (
+    <Screen>
+      <ScreenHeader title="Rappels" subtitle="Notifications locales, 100 % facultatives" />
+      <Card>
+        <EmptyState
+          icon="phone-portrait"
+          title="Disponible dans l'application mobile"
+          message="Les rappels planifiés en local (notifications système) nécessitent l'application mobile iOS/Android. Ils restent 100 % facultatifs et activés uniquement avec ton accord."
+        />
+      </Card>
+    </Screen>
+  );
+}
+
+export default function RappelsScreen() {
+  return Platform.OS === 'web' ? <WebUnavailable /> : <RappelsNative />;
+}

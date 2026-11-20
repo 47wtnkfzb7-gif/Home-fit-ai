@@ -2,9 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Camera from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Platform, StyleSheet, Text, View } from 'react-native';
 
-import { Card, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
+import { Card, EmptyState, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useRouter } from 'expo-router';
 import { PoseProviderUnavailableError, isPoseProviderAvailable, poseProvider } from '@/features/pose/provider';
@@ -31,7 +31,7 @@ const EXERCISE_OPTIONS: { key: ExerciseKey; label: string; icon: keyof typeof Io
 
 type Phase = 'prepare' | 'capture' | 'openedVideo' | 'analyzing' | 'result' | 'unavailable' | 'unreliable';
 
-export default function AnalyseVideoScreen() {
+function AnalyseVideoScreenNative() {
   const theme = useTheme();
   const router = useRouter();
   const cameraRef = useRef<Camera.CameraView | null>(null);
@@ -422,3 +422,18 @@ const styles = StyleSheet.create({
   bullet: { fontSize: 13, lineHeight: 19, paddingLeft: 22 },
   footerGap: { height: Spacing.xl },
 });
+
+function WebUnavailable() {
+  return (
+    <Screen>
+      <ScreenHeader title="Analyse vidéo" subtitle="Coach IA — fonctionnalité principale" />
+      <Card>
+        <EmptyState icon="phone-portrait" title="Analyse vidéo" message="La détection de pose (MediaPipe / ML Kit) et l'enregistrement vidéo s'appuient sur les capteurs natifs du téléphone, indisponibles dans un navigateur. Ouvre HOMEFIT AI dans l'application iOS/Android : rien n'est simulé ici." />
+      </Card>
+    </Screen>
+  );
+}
+
+export default function AnalyseVideoScreen() {
+  return Platform.OS === 'web' ? <WebUnavailable /> : <AnalyseVideoScreenNative />;
+}

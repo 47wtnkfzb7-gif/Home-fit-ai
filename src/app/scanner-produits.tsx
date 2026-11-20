@@ -3,9 +3,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
-import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Linking, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { Card, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
+import { Card, EmptyState, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import type { MealSlot } from '@/features/profile/labels';
 import { MEAL_LABELS } from '@/features/profile/labels';
@@ -54,7 +54,7 @@ async function fetchOffProduct(code: string): Promise<OffProduct | null> {
   }
 }
 
-export default function ScannerProduitsScreen() {
+function ScannerProduitsScreenNative() {
   const theme = useTheme();
   const [permission, requestPermission] = useCameraPermissions();
   const [phase, setPhase] = useState<Phase>('scan');
@@ -259,3 +259,18 @@ const styles = StyleSheet.create({
   input: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 12, padding: 12, fontSize: 15 },
   row3: { flexDirection: 'row' as const, gap: Spacing.sm },
 });
+
+function WebUnavailable() {
+  return (
+    <Screen>
+      <ScreenHeader title="Scanner de produits" subtitle="Base Open Food Facts" />
+      <Card>
+        <EmptyState icon="barcode" title="Scanner de produits" message="La lecture de codes-barres par la caméra utilise le module natif du téléphone, indisponible dans un navigateur. Les produits restent saisissables manuellement dans le journal." />
+      </Card>
+    </Screen>
+  );
+}
+
+export default function ScannerProduitsScreen() {
+  return Platform.OS === 'web' ? <WebUnavailable /> : <ScannerProduitsScreenNative />;
+}

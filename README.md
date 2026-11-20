@@ -22,7 +22,25 @@ React Native + Expo + TypeScript, orientée local-first.
 
 L'architecture cible complète est décrite dans [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-## Démarrer
+## Installer la version web (gratuit, aucun build natif)
+
+L'application web est déployée sur **GitHub Pages** via le workflow
+`.github/workflows/deploy-web.yml` (déclenché sur `main`). Les données restent
+dans le navigateur (localStorage), 100 % local-first.
+
+Une fois le déploiement actif (`Settings → Pages → Source: Deploy from a branch
+→ gh-pages`), la page s'ouvre sur : `https://<compte>.github.io/Home-fit-ai/`.
+
+Pour l'installer comme une application :
+- **iPhone (Safari)** : Ouvrir la page → bouton Partager → « Sur l'écran d'accueil ».
+- **Android (Chrome)** : menu ⋮ → « Ajouter à l'écran d'accueil / Installer l'application ».
+
+Sur le web, les fonctions nécessitant les capteurs natifs (analyse vidéo pose,
+scan caméra QR / codes-barres, notifications locales) affichent un état
+explicitement indisponible — jamais simulé. Tout le reste (quiz, générateur,
+bibliothèque, séances, journal, coach, stats, XP, sauvegarde) fonctionne.
+
+## Démarrer en développement
 
 ```bash
 npm install

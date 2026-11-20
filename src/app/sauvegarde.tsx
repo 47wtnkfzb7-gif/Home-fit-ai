@@ -5,7 +5,7 @@
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, StyleSheet, Text, View } from 'react-native';
 
 import { Card, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
 import { useProfile } from '@/features/profile/profile-context';
@@ -50,10 +50,20 @@ export default function SauvegardeScreen() {
 
   async function exportData() {
     const backup = await buildBackup();
-    const file = new File(Paths.cache, `homefit-ai-sauvegarde-${Date.now()}.json`);
-    file.write(JSON.stringify(backup, null, 2));
-    if (await Sharing.isAvailableAsync()) {
-      await Sharing.shareAsync(file.uri, { mimeType: 'application/json', dialogTitle: 'Exporter mes données HOMEFIT AI' });
+    const payload = JSON.stringify(backup, null, 2);
+    if (Platform.OS === 'web') {
+      const url = URL.createObjectURL(new Blob([payload], { type: 'application/json' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'homefit-ai-sauvegarde.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    } else {
+      const file = new File(Paths.cache, `homefit-ai-sauvegarde-${Date.now()}.json`);
+      file.write(payload);
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(file.uri, { mimeType: 'application/json', dialogTitle: 'Exporter mes données HOMEFIT AI' });
+      }
     }
     setLastExport(backup.exportedAt);
   }

@@ -5,9 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Linking, StyleSheet, Text, View } from 'react-native';
+import { Linking, Platform, StyleSheet, Text, View } from 'react-native';
 
-import { Card, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
+import { Card, EmptyState, PrimaryButton, Screen, ScreenHeader } from '@/components/ui';
 import { generateWorkout, FORMAT_LABELS, type WorkoutFormat } from '@/features/engine/engine';
 import { useProfile } from '@/features/profile/profile-context';
 import { setPendingPlan } from '@/features/workout/session-store';
@@ -16,7 +16,7 @@ import { useTheme } from '@/hooks/use-theme';
 
 type Phase = 'scan' | 'exercise' | 'program' | 'external' | 'unknown';
 
-export default function QrScreen() {
+function QrScreenNative() {
   const theme = useTheme();
   const { profile } = useProfile();
   const [permission, requestPermission] = useCameraPermissions();
@@ -184,3 +184,18 @@ const styles = StyleSheet.create({
   camera: { flex: 1 },
   cameraIdle: { flex: 1, alignItems: 'center', justifyContent: 'center' as const },
 });
+
+function WebUnavailable() {
+  return (
+    <Screen>
+      <ScreenHeader title="Scanner QR" subtitle="QR internes HOMEFIT AI" />
+      <Card>
+        <EmptyState icon="qr-code" title="Scanner QR" message="La lecture de QR codes par la caméra utilise le module natif du téléphone, indisponible dans un navigateur. Ce scanner reste pleinement fonctionnel dans l'application mobile." />
+      </Card>
+    </Screen>
+  );
+}
+
+export default function QrScreen() {
+  return Platform.OS === 'web' ? <WebUnavailable /> : <QrScreenNative />;
+}

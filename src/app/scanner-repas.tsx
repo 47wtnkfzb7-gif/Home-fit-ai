@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Card, PrimaryButton, Screen, ScreenHeader, SectionHeader } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
@@ -121,8 +121,10 @@ export default function ScannerRepasScreen() {
 
       <SectionHeader title="1 · Photo du repas" />
       <View style={styles.photoRow}>
-        <PrimaryButton icon="camera" label="Prendre une photo" onPress={() => { void takePhoto(); }} />
-        <PrimaryButton icon="images" variant="secondary" label="Galerie" onPress={() => { void choosePhoto(); }} />
+        {Platform.OS !== 'web' && (
+          <PrimaryButton icon="camera" label="Prendre une photo" onPress={() => { void takePhoto(); }} />
+        )}
+        <PrimaryButton icon="images" variant="secondary" label="Choisir une photo" onPress={() => { void choosePhoto(); }} />
       </View>
       {photoUri && (
         <Text style={[styles.photoNote, { color: theme.textSecondary }]}>

@@ -114,9 +114,10 @@ function render({ size, bgColor, glyphColor, glyphScale, supersample = 3 }) {
 }
 
 mkdirSync(new URL('../assets/images/', import.meta.url).pathname, { recursive: true });
+mkdirSync(new URL('../public/', import.meta.url).pathname, { recursive: true });
 
-const out = (name, buf) => {
-  const path = new URL('../assets/images/' + name, import.meta.url).pathname;
+const out = (name, buf, dir = '../assets/images/') => {
+  const path = new URL(dir + name, import.meta.url).pathname;
   writeFileSync(path, buf);
   console.log('written', path, buf.length, 'bytes');
 };
@@ -137,3 +138,5 @@ out('android-icon-background.png', encodePNG(64, 64, (() => {
   return rgba;
 })()));
 out('favicon.png', encodePNG(48, 48, render({ size: 48, bgColor: '#FF6A00', glyphColor: '#FFFFFF', glyphScale: 0.8, supersample: 4 })));
+out('icon-192.png', encodePNG(192, 192, render({ size: 192, bgColor: '#FF6A00', glyphColor: '#FFFFFF', glyphScale: 0.66 })), '../public/');
+out('icon-512.png', encodePNG(512, 512, render({ size: 512, bgColor: '#FF6A00', glyphColor: '#FFFFFF', glyphScale: 0.66 })), '../public/');

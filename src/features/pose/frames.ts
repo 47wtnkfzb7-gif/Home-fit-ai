@@ -5,7 +5,11 @@
 // distinctes réel via la provider, qui signale toujours son estimation.
 // Aucun frame n'est jamais inventé.
 
-import * as VideoThumbnails from 'expo-video-thumbnails';
+async function thumbnails(): Promise<typeof import('expo-video-thumbnails')> {
+  return import('expo-video-thumbnails');
+}
+
+
 
 export interface ExtractedFrames {
   uris: string[];
@@ -17,6 +21,7 @@ export async function extractFrames(
   count = 24,
   stepMs = 1000,
 ): Promise<ExtractedFrames> {
+  const VideoThumbnails = await thumbnails();
   const uris: string[] = [];
   for (let i = 0; i < count; i += 1) {
     const result = await VideoThumbnails.getThumbnailAsync(videoUri, {
